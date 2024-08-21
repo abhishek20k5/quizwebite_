@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #921111;
+        }
+        #quiz-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #question-container {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #options-container {
+            margin-bottom: 20px;
+        }
+
+        .option {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+            transition: background-color 0.3s;
+        }
+
+        .option:hover {
+            background-color: #062076;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: #100101;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #submit-button:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        #result-container {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        #loginBtn {
+            position: absolute;
+            top: 2%;
+            left: 2%;
+        }
+    </style>
+</head>
+<body>
+    <header><button id="loginBtn">Login</button></header>
+    <div id="quiz-container">
+        <h1>Quiz Application</h1>
+        <div id="question-container"></div>
+        <div id="options-container"></div>
+        <button id="submit-button">Submit</button>
+        <div id="result-container"></div>
+    </div>
+    <script>
+        // Sample quiz data
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+                answer: "Paris"
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                answer: "4"
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Earth", "Mars", "Jupiter", "Saturn"],
+                answer: "Mars"
+            },
+            {
+                question: "Which country was preveiously know as Persia?",
+                options: ["London", "Amarica", "France", "Iran"],
+                answer: "Iran"
+            },
+            {
+                question: "Inwhich year WW1 has ended?",
+                options: ["1980","1918","1917","1900"],
+                answer: "1918"
+            },
+            ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionContainer = document.getElementById('question-container');
+        const optionsContainer = document.getElementById('options-container');
+        const resultContainer = document.getElementById('result-container');
+        const submitButton = document.getElementById('submit-button');
+
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionContainer.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+
+            currentQuestion.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.textContent = option;
+                optionElement.classList.add('option');
+                optionElement.addEventListener('click', () => selectOption(option));
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function selectOption(selectedOption) {
+            // Deselect previous selection if needed
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            // Mark selected option
+            event.target.classList.add('selected');
+            submitButton.disabled = false;
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('.option.selected');
+            if (selectedOption) {
+                const selectedText = selectedOption.textContent;
+                if (selectedText === quizData[currentQuestionIndex].answer) {
+                    score++;
+                }
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            } else {
+                alert('Please select an option!');
+            }
+            submitButton.disabled = true;
+        }
+
+        function showResult() {
+            questionContainer.style.display = 'none';
+            optionsContainer.style.display = 'none';
+            submitButton.style.display = 'none';
+            resultContainer.textContent = `Your score is ${score} out of ${quizData.length}`;
+        }
+
+        submitButton.addEventListener('click', checkAnswer);
+
+        // Initial load
+        loadQuestion();
+    </script>
+</body>
+</html>
